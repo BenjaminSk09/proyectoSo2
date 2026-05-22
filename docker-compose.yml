@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_server
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - network_umg
+
+  backend:
+    image: python:3.10-slim
+    container_name: backend_api
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    ports:
+      - "8001:8000"  # <--- Cambiamos el puerto externo al 8001 para que esté libre
+    command: sh -c "pip install fastapi uvicorn pymongo && uvicorn main:app --host 0.0.0.0 --port 8000"
+    depends_on:
+      - mongodb
+    networks:
+      - network_umg
+
+  frontend:
+    image: nginx:alpine
+    container_name: frontend_web
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    networks:
+      - network_umg
+
+networks:
+  network_umg:
+    driver: bridge
+
+volumes:
+  mongo_data:

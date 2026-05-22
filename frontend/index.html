@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Telemetría Robótica - UMG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
+    <div class="container mx-auto p-6">
+        <header class="flex justify-between items-center border-b border-gray-800 pb-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-indigo-400">🤖 Proyecto Phantom - Telemetría</h1>
+                <p class="text-sm text-gray-400">Sistemas Operativos II | UMG Chimaltenango</p>
+            </div>
+            <div id="api-status" class="px-3 py-1 rounded-full text-xs font-semibold bg-red-900 text-red-200">
+                API Desconectada
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-xl border border-gray-700">
+                <h2 class="text-xl font-semibold mb-4 text-gray-200">
+                    📋 Registro de Eventos en Tiempo Real
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-700 text-left text-sm">
+                        <thead class="bg-gray-750 text-indigo-300 uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="p-3">Timestamp</th>
+                                <th class="p-3">Componente / Módulo</th>
+                                <th class="p-3">Acción Ejecutada</th>
+                                <th class="p-3">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-table-body" class="divide-y divide-gray-700 bg-gray-850">
+                            <tr>
+                                <td colspan="4" class="p-4 text-center text-gray-500">Esperando conexión con el servidor...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const SERVER_IP = window.location.hostname;
+        const API_URL = `http://${SERVER_IP}:8001/api/events`;
+
+        async function fetchLogs() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error();
+                const data = await response.json();
+
+                const statusBadge = document.getElementById('api-status');
+                statusBadge.textContent = "API En Línea";
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-green-900 text-green-200";
+
+                const tbody = document.getElementById('logs-table-body');
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-400">No hay eventos registrados aún.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.map(log => `
+                    <tr class="hover:bg-gray-700 transition-colors">
+                        <td class="p-3 font-mono text-gray-400">${log.timestamp || 'N/A'}</td>
+                        <td class="p-3 font-semibold text-gray-200">${log.componente}</td>
+                        <td class="p-3 text-gray-300">${log.accion}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-0.5 rounded text-xs font-medium ${log.estado === 'SUCCESS' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}">
+                                ${log.estado}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                const statusBadge = document.getElementById('api-status');
+                statusBadge.textContent = "API Fuera de Línea";
+                statusBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-red-900 text-red-200";
+            }
+        }
+
+        fetchLogs();
+        setInterval(fetchLogs, 2000);
+    </script>
+</body>
+</html>
