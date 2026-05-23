@@ -41,6 +41,7 @@ Funciones:
 - Visualizar el estado de conexión del backend
 
 Contenedor: `frontend_web`
+
 Puerto utilizado: `80`
 
 # Backend API
