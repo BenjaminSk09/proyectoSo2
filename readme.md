@@ -61,6 +61,7 @@ GET /leer_comando
 ````
 
 Contenedor: `backend_api`
+
 Puerto utilizado: `8001`
 
 # Base de Datos MongoDB
@@ -72,6 +73,7 @@ Funciones:
 - Gestión de eventos registrados
 
 Contenedor: `mongodb_server`
+
 Puerto utilizado: `27017`
 
 # Tecnologías Utilizadas
@@ -106,17 +108,23 @@ Todos los servicios se comunican mediante una red bridge de Docker.
 # Cómo Ejecutar el Proyecto
 Levantar contenedores
 `sudo docker compose up -d`
+
 Verificar contenedores activos
 `sudo docker ps`
+
 Reiniciar servicios
 `sudo docker compose down && sudo docker compose up -d`
 
 # Integrantes del grupo
 Benjamin Bonifacio Sincal Ajú Carné: 1990-23-11281
+
 Emerson Estudardo Guzmán Vielman Carné: 1990-23-3484
+
 Henry Daniel Cabrera Estrada Carné: 1990-23-3718
 
 # Curso
 Sistemas Operativos II
+
 Universidad Mariano Gálvez de Guatemala
+
 Centro Universitario de Chimaltenango
